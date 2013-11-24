@@ -1,7 +1,8 @@
 {
-  "env"    : "staging",
-  "couchdb": {
+  "env"     : "staging",
+  "couchdb" : {
     "url"     : "http://localhost:5984",
     "database": "registry_dev"
-  }
+  },
+  "diskPath": "/tmp/docker"
 }

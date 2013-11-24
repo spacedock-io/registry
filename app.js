@@ -1,7 +1,19 @@
 var express = require('express'),
     pkg     = require('./package.json'),
+    mkdirp  = require('mkdirp'),
     config  = require('./config/'),
     routes  = require('./routes/');
+
+
+/*
+ * Setup the path to save files to  
+ */
+
+mkdirp(config.diskPath);
+
+/*
+ * Setup express app
+ */
 
 var server = express();
 
@@ -16,6 +28,14 @@ server.use(function(req, res, next) {
   next();
 });
 
+/*
+ * Setup routes
+ */
+
 routes.hookRoutes(server);
+
+/*
+ * Setup webserver
+ */
 
 server.listen(8080);
