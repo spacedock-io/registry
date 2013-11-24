@@ -1,4 +1,5 @@
 {
+  "env"    : "staging",
   "couchdb": {
     "url"     : "http://localhost:5984",
     "database": "registry_dev"

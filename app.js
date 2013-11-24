@@ -1,5 +1,6 @@
 var express = require('express'),
     pkg     = require('./package.json'),
+    config  = require('./config/'),
     routes  = require('./routes/');
 
 var server = express();
@@ -11,7 +12,7 @@ server.use(express.session({ secret: require('node-uuid').v4() }));
 
 server.use(function(req, res, next) {
   res.header('X-Docker-Registry-Version', pkg.version);
-  res.header('X-Docker-Registry-Config', (process.env['SPACEDOCK_REGISTRY_ENV'] || 'staging'));
+  res.header('X-Docker-Registry-Config', config.env);
   next();
 });
 
