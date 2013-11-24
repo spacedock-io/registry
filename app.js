@@ -2,6 +2,7 @@ var express = require('express'),
     pkg     = require('./package.json'),
     mkdirp  = require('mkdirp'),
     uuid    = require('node-uuid'),
+    auth    = require('./middlewares/auth'),
     config  = require('./config/'),
     routes  = require('./routes/');
 
@@ -21,6 +22,7 @@ server.use(express.urlencoded());
 server.use(express.json());
 server.use(express.cookieParser());
 server.use(express.session({ secret: uuid.v4() }));
+server.use(auth);
 
 server.use(function(req, res, next) {
   res.header('X-Docker-Registry-Version', pkg.version);
