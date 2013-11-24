@@ -38,4 +38,4 @@ routes.hookRoutes(server);
  * Setup webserver
  */
 
-server.listen(8080);
+server.listen(config.port);

@@ -1,8 +1,11 @@
 {
   "env"     : "staging",
+  "port"    : "8080",
+
+  "diskPath": "/tmp/docker",
+
   "couchdb" : {
     "url"     : "http://localhost:5984",
     "database": "registry_dev"
-  },
-  "diskPath": "/tmp/docker"
+  }
 }
