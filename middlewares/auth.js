@@ -1,19 +1,18 @@
 module.exports = function parseAuthToken(req, res, next) {
-  if(req.headers.authorization) {
-    var auth = req.headers.authorization.match(/^Token signature=(\w+),repository="(\w+)\/(\w+)",access=(\w+)$/);
+  if(!req.headers.authorization) return next();
 
-    if(!auth) {
-      return res.send(400);
-    }
+  var auth = req.headers.authorization.match(/^Token signature=(\w+),repository="(\w+)\/(\w+)",access=(\w+)$/);
 
-    req.user = {
-      signature: auth[1],
-      namespace: auth[2],
-      repo     : auth[3],
-      access   : auth[4]
-    };
-
-    return next();
+  if(!auth) {
+    return res.send(400);
   }
-  else { return next(); }
+
+  req.auth = {
+    signature: auth[1],
+    namespace: auth[2],
+    repo     : auth[3],
+    access   : auth[4]
+  };
+
+  next();
 };
