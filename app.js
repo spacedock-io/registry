@@ -30,11 +30,6 @@ server.use(function(req, res, next) {
   next();
 });
 
-server.use(function(req, res, next) {
-  req.uuid = uuid.v4(); // TRACK ALL THE PEOPLE
-  next();
-});
-
 /*
  * Setup routes
  */
