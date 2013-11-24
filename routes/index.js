@@ -6,6 +6,10 @@ var misc   = require('../lib/misc'),
 var routes = [
   [ 'get', '/'                                   , misc.index         ],
 
+  /*
+   * Registry routes
+   */
+
   [ 'get', '/_ping'                              , misc.ping          ],
   [ 'get', '/v1/_ping'                           , misc.ping          ]
 
@@ -21,6 +25,10 @@ var routes = [
 //[ 'put', '/v1/repositories/:ns/:repo/tags/:tag', tags.put           ],
 //
 //[ 'del', '/v1/repositories/:ns/:repo'          , repos.delete       ]
+
+  /*
+   * Index routes
+   */
 ];
 
 exports.hookRoutes = function(server) {
