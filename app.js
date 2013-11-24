@@ -30,6 +30,7 @@ server.use(function(req, res, next) {
 
 server.use(function(req, res, next) {
   req.uuid = uuid.v4(); // TRACK ALL THE PEOPLE
+  next();
 });
 
 /*
