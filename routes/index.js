@@ -2,7 +2,7 @@ var fs = require('fs'),
     path = require('path');
 
 var files = fs.readdirSync(__dirname).filter(function (file) {
-  return file.match(/\.js$/i) !== null && file !== 'index.js';
+  return file.match(/\.js$/i) !== null && file !== path.basename(module.id);
 });
 
 function flatten(routes, start, parent) {
