@@ -34,4 +34,6 @@ server.use(auth);
 routes(server);
 
 // Setup webserver
-server.listen(config.port);
+server.listen(config.port, function () {
+  console.log('Registry listening on port %d', config.port);
+});
