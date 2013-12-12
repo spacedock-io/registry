@@ -17,7 +17,6 @@ server.use(express.urlencoded());
 server.use(express.json());
 server.use(express.cookieParser());
 server.use(express.session({ secret: uuid.v4() }));
-server.use(auth);
 
 server.use(function(req, res, next) {
   res.set({
@@ -27,6 +26,9 @@ server.use(function(req, res, next) {
   });
   next();
 });
+
+// Setup registry auth
+server.use(auth);
 
 // Setup registry routes
 routes.hookRoutes(server);
