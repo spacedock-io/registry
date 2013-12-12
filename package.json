@@ -1,6 +1,6 @@
 {
   "name"   : "registry.spacedock",
-  "author" : "yawnt <yawn.localhost@gmail.com>",
+  "author" : "Spacedock <hello@spacedock.io>",
   "version": "0.0.1",
 
   "dependencies": {
