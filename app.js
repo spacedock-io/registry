@@ -31,7 +31,7 @@ server.use(function(req, res, next) {
 server.use(auth);
 
 // Setup registry routes
-routes.hookRoutes(server);
+routes(server);
 
 // Setup webserver
 server.listen(config.port);

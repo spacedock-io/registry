@@ -1,38 +1,33 @@
-var misc   = require('../lib/misc'),
-    images = require('../lib/images'),
-    tags   = require('../lib/tags'),
-    repos  = require('../lib/repos');
+var fs = require('fs'),
+    path = require('path');
 
-var routes = [
-  [ 'get', '/'                                   , misc.index         ],
+var files = fs.readdirSync(__dirname).filter(function (file) {
+  return file.match(/\.js$/i) !== null && file !== 'index.js';
+});
 
-  /*
-   * Registry routes
-   */
+function flatten(routes, start, parent) {
+  Object.keys(routes).forEach(function (key) {
+    var route = routes[key];
+    if (typeof route === 'function') return;
+    else if (typeof route === 'object' && !Array.isArray(route)) {
+      if (start) {
+        parent[start + key] = flatten(routes[key], start + key, parent);
+        delete routes[key];
+        delete parent[start];
+      }
+      else return routes[key] = flatten(routes[key], key, routes);
+    }
+  });
+  return routes;
+}
 
-  [ 'get', '/_ping'                              , misc.ping          ],
-  [ 'get', '/v1/_ping'                           , misc.ping          ]
-
-//[ 'get', '/v1/images/:id/layer'                , images.getLayer    ],
-//[ 'put', '/v1/images/:id/layer'                , images.putLayer    ],
-//[ 'get', '/v1/images/:id/json'                 , images.getJson     ],
-//[ 'put', '/v1/images/:id/json'                 , images.putJson     ],
-//[ 'get', '/v1/images/:id/ancestry'             , images.getAncestry ],
-//
-//[ 'get', '/v1/repositories/:ns/:repo/tags'     , tags.getAll        ],
-//[ 'get', '/v1/repositories/:ns/:repo/tags/:tag', tags.get           ],
-//[ 'del', '/v1/repositories/:ns/:repo/tags/:tag', tags.delete        ],
-//[ 'put', '/v1/repositories/:ns/:repo/tags/:tag', tags.put           ],
-//
-//[ 'del', '/v1/repositories/:ns/:repo'          , repos.delete       ]
-
-  /*
-   * Index routes
-   */
-];
-
-exports.hookRoutes = function(server) {
-  routes.forEach(function(what) {
-    server[what.shift()].apply(server, what);
+module.exports = function (server) {
+  files.forEach(function (file) {
+    var routes = flatten(require(path.join(__dirname, file)));
+    Object.keys(routes).forEach(function (route) {
+      Object.keys(routes[route]).forEach(function (verb) {
+        server[verb.toLowerCase()].call(server, route, routes[route][verb]);
+      });
+    });
   });
 };
