@@ -6,16 +6,11 @@ var express = require('express'),
     config  = require('./config/'),
     routes  = require('./routes/');
 
-/*
- * Setup the path to save files to  
- */
 
+// Setup the path to save files to
 mkdirp(config.diskPath);
 
-/*
- * Setup express app
- */
-
+// Setup express app
 var server = express();
 
 server.use(express.urlencoded());
@@ -25,19 +20,16 @@ server.use(express.session({ secret: uuid.v4() }));
 server.use(auth);
 
 server.use(function(req, res, next) {
-  res.header('X-Docker-Registry-Version', pkg.version);
-  res.header('X-Docker-Registry-Config', config.env);
+  res.set({
+    'X-Powered-By': 'SpaceDock',
+    'X-Docker-Registry-Version': pkg.version,
+    'X-Docker-Registry-Config': config.env
+  });
   next();
 });
 
-/*
- * Setup routes
- */
-
+// Setup registry routes
 routes.hookRoutes(server);
 
-/*
- * Setup webserver
- */
-
+// Setup webserver
 server.listen(config.port);
