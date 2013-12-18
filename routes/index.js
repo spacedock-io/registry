@@ -9,8 +9,7 @@ var files = fs.readdirSync(__dirname).filter(function (file) {
 function flatten(routes, start, parent) {
   Object.keys(routes).forEach(function (key) {
     var route = routes[key];
-    if (typeof route === 'function') return;
-    else if (typeof route === 'object' && !Array.isArray(route)) {
+    if (typeof route === 'object' && !Array.isArray(route)) {
       if (start) {
         parent[start + key] = flatten(routes[key], start + key, parent);
         delete routes[key];
