@@ -1,13 +1,20 @@
 package images
 
-import (
-  "net/http"
-  "github.com/gorilla/mux"
-  /* "launchpad.net/goamz/s3" */
-)
+const IMAGE_BASE_PATH = "images/"
 
-func GetLayer(w http.ResponseWriter, r *http.Request) {
-  params := mux.Vars(r)
-
-  w.Write([]byte("hello " + params["id"]))
+type Image struct {
+  id string
 }
+
+func (i *Image) JsonPath() string {
+  return IMAGE_BASE_PATH + i.id  + "/json"
+}
+
+func (i *Image) LayerPath() string {
+  return IMAGE_BASE_PATH + i.id  + "/layer"
+}
+
+func (i *Image) AncestryPath() string {
+  return IMAGE_BASE_PATH + i.id + "/ancestry"
+}
+
