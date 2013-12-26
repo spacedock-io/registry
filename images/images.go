@@ -3,7 +3,7 @@ package images
 const IMAGE_BASE_PATH = "images/"
 
 type Image struct {
-  id string
+  id, Tag string
 }
 
 func (i *Image) JsonPath() string {

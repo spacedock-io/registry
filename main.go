@@ -4,19 +4,16 @@ import(
   "fmt"
   "os"
   "net/http"
-  "encoding/json"
   "github.com/gorilla/mux"
   "github.com/yawnt/registry.spacedock/images"
   "github.com/yawnt/registry.spacedock/auth"
   "github.com/codegangsta/cli"
   "github.com/yawnt/registry.spacedock/context"
+  "github.com/garyburd/redigo/redis"
+  "github.com/boj/redistore"
 )
 
 const VERSION = "0.0.1"
-
-type Config struct {
-  version, env string
-}
 
 func main() {
   app := cli.NewApp()
@@ -34,6 +31,12 @@ func main() {
     context.Set("version", VERSION)
     context.Set("env", c.String("env"))
 
+    /* Redis */
+    conn, _ := redis.Dial("tcp", ":6379")
+    context.Set("redis", conn)
+
+    /* Session */
+    context.Set("sessionStore", redistore.NewRediStore(10, "tcp", ":6379", "", []byte("SECRET")))
     router := mux.NewRouter()
 
     router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

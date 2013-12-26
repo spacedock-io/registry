@@ -7,9 +7,10 @@ import (
   "github.com/gorilla/mux"
   "github.com/gorilla/sessions"
   "github.com/yawnt/registry.spacedock/context"
+  "github.com/boj/redistore"
+  "github.com/yawnt/registry.spacedock/repositories"
 )
 
-var Store = sessions.NewCookieStore([]byte("MYSUPERSECRET"))
 var parseToken = regexp.MustCompile(`^Token signature=(\w+),repository=(.*?),access=(\w+)$`)
 
 type callback func(http.ResponseWriter, *http.Request)
@@ -20,7 +21,7 @@ func init() {
 
 type Token struct {
   Signature string
-  Repo      string
+  Repo      repositories.Repository
   Access    string
 }
 
@@ -32,7 +33,7 @@ func LoadCheckToken(s *sessions.Session, w http.ResponseWriter, r *http.Request)
   extracted := parseToken.FindStringSubmatch(r.Header["Authorization"][0])
   token := &Token{
     Signature: extracted[1],
-    Repo: extracted[2],
+    Repo: *repositories.NewRepo(extracted[2]),
     Access: extracted[3],
   }
 
@@ -52,13 +53,13 @@ func LoadCheckToken(s *sessions.Session, w http.ResponseWriter, r *http.Request)
 }
 
 func (t *Token) Header() string {
-  return "Token signature=" + t.Signature + ",repository=" + t.Repo + ",access="+ t.Access
+  return "Token signature=" + t.Signature + ",repository=" + t.Repo.String() + ",access="+ t.Access
 }
 
 func (t *Token) Validate() bool {
   client := &http.Client{}
 
-  req, _ := http.NewRequest("GET", "https://index.docker.io/v1/repositories/" + t.Repo + "/images", nil)
+  req, _ := http.NewRequest("GET", "https://index.docker.io/v1/repositories/" + t.Repo.String() + "/images", nil)
   req.Header.Add("Authorization", t.Header())
 
   resp, err := client.Do(req)
@@ -69,14 +70,16 @@ func (t *Token) Validate() bool {
 }
 
 func Secure(c *mux.Router) callback {
+  Store := context.Get("sessionStore").(*redistore.RediStore)
+
   return func(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("X-Docker-Registry-Version", context.Get("version").(string))
     w.Header().Set("X-Docker-Registry-Config", context.Get("env").(string))
-
+    println(r.URL.String())
     /*
      * These two routes require no auth
      */
-    if r.URL.String() == "/" && r.URL.String() == "/v1/_ping" {
+    if r.URL.String() == "/" || r.URL.String() == "/v1/_ping" {
       c.ServeHTTP(w, r);
       return
     }
