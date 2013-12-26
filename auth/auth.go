@@ -28,13 +28,26 @@ func LoadCheckToken(s *sessions.Session, w http.ResponseWriter, r *http.Request)
     return false
   } else {
     extracted := parseToken.FindStringSubmatch(r.Header["Authorization"][0])
-    s.Values["token"] = &Token{
+
+    token := &Token{
       Signature: extracted[1],
       Repo: extracted[2],
       Access: extracted[3],
     }
-    s.Save(r, w)
-    return s.Values["token"].(*Token).Validate()
+
+    /*
+     * Token Access must be compliant with the HTTP Method
+     */
+    if token.Access == "read" && r.Method != "GET" { return false }
+    if token.Access == "write" && r.Method != "POST" && r.Method != "PUT" { return false }
+    if token.Access == "delete" && r.Method != "DELETE" { return false }
+
+    if token.Validate() {
+      s.Values["token"] = token
+      s.Save(r, w)
+      return true
+    }
+    return false
   }
 }
 
@@ -49,28 +62,31 @@ func (t *Token) Validate() bool {
   resp, err := client.Do(req)
   if err != nil || resp.StatusCode != 200 {
     return false
-  } else {
-    return true
   }
+
+  return true
 }
 
 func Secure(c *mux.Router) callback {
   return func(w http.ResponseWriter, r *http.Request) {
+
     /*
      * These two routes require no auth
      */
-    if r.URL.String() != "/" && r.URL.String() != "/v1/_ping" {
-      session, _ := Store.Get(r, "default")
-      /*
-       * Two types of auth are valid: Token or Session 
-       */
-      if session.Values["token"] != nil || LoadCheckToken(session, w, r) {
-        c.ServeHTTP(w, r);
-      } else {
-        w.WriteHeader(401);
-      }
-    } else {
+    if r.URL.String() == "/" && r.URL.String() == "/v1/_ping" {
       c.ServeHTTP(w, r);
+      return
+    }
+
+    session, _ := Store.Get(r, "default")
+
+    /*
+    * Two types of auth are valid: Token or Session 
+    */
+    if session.Values["token"] != nil || LoadCheckToken(session, w, r) {
+      c.ServeHTTP(w, r);
+    } else {
+      w.WriteHeader(401);
     }
   }
 }
