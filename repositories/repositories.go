@@ -2,8 +2,8 @@ package repositories
 
 import (
   "strings"
-  /* "encoding/json" */
-  /* "github.com/yawnt/registry.spacedock/context" */
+  "encoding/json"
+  "github.com/yawnt/registry.spacedock/context"
   /* "github.com/yawnt/registry.spacedock/images" */
   /* "github.com/garyburd/redigo/redis" */
 )
@@ -11,6 +11,10 @@ import (
 type Repository struct {
   ns   string
   repo string
+}
+
+type JsonImg struct {
+  Tag, id string
 }
 
 func NewRepo(complete string) *Repository {
@@ -33,8 +37,10 @@ func (r *Repository) String() string {
   return r.ns + "/" + r.repo
 }
 
-func (r *Repository) Put() {
-  /* conn := context.Get("redis").(redis.Conn) */
+func (r *Repository) Put(data []byte) {
+  var result []JsonImg
+  err := json.Unmarshal(data, &result)
 
+  /* context.Conn.Do("LPUSH", r.String() + ":_index_images" */
   /* conn.Do("H */
 }

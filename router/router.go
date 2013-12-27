@@ -9,13 +9,17 @@ import(
 var Router = mux.NewRouter()
 
 func init() {
+  /* Home page */
   Router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("docker-registry server"))
-  }).Methods("GET")
-  Router.HandleFunc("/v1/_ping", func(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("true"))
+    w.Write([]byte("docker-registry server"))
   }).Methods("GET")
 
+  /* Ping */
+  Router.HandleFunc("/v1/_ping", func(w http.ResponseWriter, r *http.Request) {
+    w.Write([]byte("true"))
+  }).Methods("GET")
+
+  /* Images Routes */
   rImages := Router.PathPrefix("/v1/images/{id}").Subrouter()
   rImages.HandleFunc("/ancestry", images.GetAncestry).Methods("GET")
   rImages.HandleFunc("/layer", images.GetLayer).Methods("GET")

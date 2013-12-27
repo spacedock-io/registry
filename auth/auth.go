@@ -11,8 +11,6 @@ import (
 
 var parseToken = regexp.MustCompile(`^Token signature=(\w+),repository=(.*?),access=(\w+)$`)
 
-type callback func(http.ResponseWriter, *http.Request)
-
 func init() {
   gob.Register(&Token{})
 }
