@@ -55,7 +55,7 @@ func (t *Token) Header() string {
 func (t *Token) Validate() bool {
   client := &http.Client{}
 
-  req, _ := http.NewRequest("GET", "https://index.docker.io/v1/repositories/" + t.Repo.String() + "/images", nil)
+  req, _ := http.NewRequest("GET", context.Index + "/v1/repositories/" + t.Repo.String() + "/images", nil)
   req.Header.Add("Authorization", t.Header())
 
   resp, err := client.Do(req)

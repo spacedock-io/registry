@@ -13,6 +13,7 @@ import(
 const VERSION = "0.0.1"
 var Env string
 var Port string
+var Index string
 
 /* 
  * S3 

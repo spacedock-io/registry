@@ -39,6 +39,7 @@ func main() {
   app.Action = func(c *cli.Context) {
     context.Env = c.String("env")
     context.Port = c.String("port")
+    context.Index = c.String("index")
 
     fmt.Println("Registry listening on: http://127.0.0.1:" + context.Port)
     http.HandleFunc("/", Secure(router.Router))
