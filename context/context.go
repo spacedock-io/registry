@@ -1,11 +1,22 @@
 package context
 
-var context = make(map[interface{}]interface{})
+import(
+  "github.com/garyburd/redigo/redis"
+  "github.com/boj/redistore"
+)
 
-func Set(key interface{}, value interface{}) {
-  context[key] = value
-}
+/* Defaults */
+const VERSION = "0.0.1"
+var Env string
+var Port string
 
-func Get(key interface{}) interface{}{
-  return context[key]
+/*
+ * Redis DB Connection & Session Store
+ */
+var Conn redis.Conn
+var Store *redistore.RediStore
+
+func init() {
+  Conn, _ = redis.Dial("tcp", ":6379")
+  Store = redistore.NewRediStore(10, "tcp", ":6379", "", []byte("SECRET"))
 }

@@ -4,10 +4,8 @@ import (
   "net/http"
   "encoding/gob"
   "regexp"
-  "github.com/gorilla/mux"
   "github.com/gorilla/sessions"
   "github.com/yawnt/registry.spacedock/context"
-  "github.com/boj/redistore"
   "github.com/yawnt/registry.spacedock/repositories"
 )
 
@@ -69,29 +67,14 @@ func (t *Token) Validate() bool {
   return false
 }
 
-func Secure(c *mux.Router) callback {
-  Store := context.Get("sessionStore").(*redistore.RediStore)
-
-  return func(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("X-Docker-Registry-Version", context.Get("version").(string))
-    w.Header().Set("X-Docker-Registry-Config", context.Get("env").(string))
-    println(r.URL.String())
-    /*
-     * These two routes require no auth
-     */
-    if r.URL.String() == "/" || r.URL.String() == "/v1/_ping" {
-      c.ServeHTTP(w, r);
-      return
-    }
-
-    /*
-     * Two types of auth are valid: Token or Session 
-     */
-    session, _ := Store.Get(r, "default")
-    if session.Values["token"] != nil || LoadCheckToken(session, w, r) {
-      c.ServeHTTP(w, r);
-    } else {
-      w.WriteHeader(401);
-    }
+func Authenticated (w http.ResponseWriter, r *http.Request) bool {
+  if r.URL.String() == "/" || r.URL.String() == "/v1/_ping" {
+    return true
   }
+
+  /*
+   * Two types of auth are valid: Token or Session 
+   */
+  session, _ := context.Store.Get(r, "default")
+  return session.Values["token"] != nil || LoadCheckToken(session, w, r)
 }

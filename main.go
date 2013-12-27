@@ -5,22 +5,31 @@ import(
   "os"
   "net/http"
   "github.com/gorilla/mux"
-  "github.com/yawnt/registry.spacedock/images"
+  "github.com/yawnt/registry.spacedock/router"
   "github.com/yawnt/registry.spacedock/auth"
   "github.com/codegangsta/cli"
   "github.com/yawnt/registry.spacedock/context"
-  "github.com/garyburd/redigo/redis"
-  "github.com/boj/redistore"
 )
 
-const VERSION = "0.0.1"
+func Secure(c *mux.Router) (func(http.ResponseWriter, *http.Request)) {
+  return func(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("X-Docker-Registry-Version", context.VERSION)
+    w.Header().Set("X-Docker-Registry-Config", context.VERSION)
+
+    if auth.Authenticated(w, r) {
+      c.ServeHTTP(w, r);
+    } else {
+      w.WriteHeader(401);
+    }
+  }
+}
 
 func main() {
   app := cli.NewApp()
 
   app.Name = "Registry"
   app.Usage = "Run a standalone Docker registry"
-  app.Version = VERSION
+  app.Version = context.VERSION
   app.Flags = []cli.Flag {
     cli.StringFlag{"port, p", "8080", "Port number"},
     cli.StringFlag{"index, i", "false", "Index URL"},
@@ -28,35 +37,12 @@ func main() {
   }
 
   app.Action = func(c *cli.Context) {
-    context.Set("version", VERSION)
-    context.Set("env", c.String("env"))
+    context.Env = c.String("env")
+    context.Port = c.String("port")
 
-    /* Redis */
-    conn, _ := redis.Dial("tcp", ":6379")
-    context.Set("redis", conn)
-
-    /* Session */
-    context.Set("sessionStore", redistore.NewRediStore(10, "tcp", ":6379", "", []byte("SECRET")))
-    router := mux.NewRouter()
-
-    router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-      w.Write([]byte("docker-registry server"))
-    }).Methods("GET")
-    router.HandleFunc("/v1/_ping", func(w http.ResponseWriter, r *http.Request) {
-      w.Write([]byte("true"))
-    }).Methods("GET")
-
-    rImages := router.PathPrefix("/v1/images/{id}").Subrouter()
-    rImages.HandleFunc("/ancestry", images.GetAncestry).Methods("GET")
-    rImages.HandleFunc("/layer", images.GetLayer).Methods("GET")
-    rImages.HandleFunc("/layer", images.PutLayer).Methods("PUT")
-    rImages.HandleFunc("/json", images.GetJson).Methods("GET")
-    rImages.HandleFunc("/json", images.PutJson).Methods("PUT")
-
-    fmt.Println("Registry listening on: http://127.0.0.1:" + c.String("port"))
-
-    http.HandleFunc("/", auth.Secure(router))
-    http.ListenAndServe(":" + c.String("port"), nil)
+    fmt.Println("Registry listening on: http://127.0.0.1:" + context.Port)
+    http.HandleFunc("/", Secure(router.Router))
+    http.ListenAndServe(":" + context.Port, nil)
   }
 
   app.Run(os.Args)
