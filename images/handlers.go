@@ -6,7 +6,7 @@ import(
   "io/ioutil"
   "github.com/gorilla/mux"
   "launchpad.net/goamz/s3"
-  "github.com/yawnt/registry.spacedock/context"
+  "github.com/spacedock-io/registry/context"
 )
 
 type Layer struct {

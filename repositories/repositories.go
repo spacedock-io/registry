@@ -3,8 +3,8 @@ package repositories
 import (
   "strings"
   "encoding/json"
-  "github.com/yawnt/registry.spacedock/context"
-  /* "github.com/yawnt/registry.spacedock/images" */
+  "github.com/spacedock-io/registry/context"
+  /* "github.com/spacedock-io/registry/images" */
   /* "github.com/garyburd/redigo/redis" */
 )
 

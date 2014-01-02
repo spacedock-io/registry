@@ -5,8 +5,8 @@ import (
   "encoding/gob"
   "regexp"
   "github.com/gorilla/sessions"
-  "github.com/yawnt/registry.spacedock/context"
-  "github.com/yawnt/registry.spacedock/repositories"
+  "github.com/spacedock-io/registry/context"
+  "github.com/spacedock-io/registry/repositories"
 )
 
 var parseToken = regexp.MustCompile(`^Token signature=(\w+),repository=(.*?),access=(\w+)$`)

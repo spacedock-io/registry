@@ -3,7 +3,7 @@ package router
 import(
   "net/http"
   "github.com/gorilla/mux"
-  "github.com/yawnt/registry.spacedock/images"
+  "github.com/spacedock-io/registry/images"
 )
 
 var Router = mux.NewRouter()

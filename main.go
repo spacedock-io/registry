@@ -5,10 +5,10 @@ import(
   "os"
   "net/http"
   "github.com/gorilla/mux"
-  "github.com/yawnt/registry.spacedock/router"
-  "github.com/yawnt/registry.spacedock/auth"
+  "github.com/spacedock-io/registry/router"
+  "github.com/spacedock-io/registry/auth"
   "github.com/codegangsta/cli"
-  "github.com/yawnt/registry.spacedock/context"
+  "github.com/spacedock-io/registry/context"
 )
 
 func Secure(c *mux.Router) (func(http.ResponseWriter, *http.Request)) {
