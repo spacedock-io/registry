@@ -9,7 +9,8 @@ import(
 var DB gorm.DB
 
 func init() {
-  DB, err := gorm.Open("postgresql", "user=yawnt dbname=test sslmode=disable")
+  var err error
+  DB, err = gorm.Open("postgresql", "user=yawnt dbname=test sslmode=disable")
 
   if err != nil {
     panic(fmt.Sprintf("Got error when connect database, the error is '%v'", err))
