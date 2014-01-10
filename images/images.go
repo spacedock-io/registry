@@ -3,6 +3,7 @@ package images
 import(
   "io"
   "io/ioutil"
+  "encoding/json"
   "github.com/ricallinson/forgery"
   "github.com/spacedock-io/registry/models"
   "github.com/ncw/swift"
@@ -64,5 +65,9 @@ func GetAncestry(req *f.Request, res *f.Response) {
   var image models.Image
   models.DB.First(&models.Image{Uuid: req.Params["id"]}).First(&image)
 
-  res.Send(image.Ancestry)
+  data, err := json.Marshal(image.Ancestry)
+
+  if err != nil {
+    res.Send(data)
+  } else { res.Send(500) }
 }
