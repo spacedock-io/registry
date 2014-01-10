@@ -8,7 +8,6 @@ import(
   "github.com/spacedock-io/registry/router"
   "github.com/spacedock-io/registry/auth"
   "github.com/spacedock-io/registry/config"
-  "github.com/Southern/middleware"
   "github.com/Southern/logger"
 )
 
@@ -27,7 +26,6 @@ func Secure(c *mux.Router) (func(http.ResponseWriter, *http.Request)) {
 
 func main() {
   server := f.CreateServer()
-  server.Use(middleware.BodyParser)
   server.Use(func (req *f.Request, res *f.Response, next func()) {
     defer next()
 
