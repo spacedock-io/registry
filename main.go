@@ -14,17 +14,6 @@ import(
 
 const VERSION = "0.0.1"
 
-func Secure(c *mux.Router) (func(http.ResponseWriter, *http.Request)) {
-  return func(w http.ResponseWriter, r *http.Request) {
-
-    if auth.Authenticated(w, r) {
-      c.ServeHTTP(w, r);
-    } else {
-      w.WriteHeader(401);
-    }
-  }
-}
-
 func main() {
   server := f.CreateServer()
   server.Use(func (req *stackr.Request, res *stackr.Response, next func()) {
