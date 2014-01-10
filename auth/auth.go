@@ -5,6 +5,7 @@ import (
   "net/http"
   "github.com/ricallinson/forgery"
   "github.com/spacedock-io/registry/config"
+  "github.com/spacedock-io/registry/session"
 )
 
 var (
@@ -36,8 +37,8 @@ func LoadCheckToken(req *f.Request) bool {
   if token.Access == "delete" && req.Method != "DELETE" { return false }
 
   if token.Validate() {
-    s.Values["token"] = token
-    s.Save(r, w)
+    sx.Session(req).Set("token", token)
+    sx.Session(req).Save()
     return true
   }
   return false

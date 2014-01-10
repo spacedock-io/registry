@@ -4,6 +4,7 @@ import (
   "net/http"
   "github.com/gorilla/sessions"
   "github.com/ricallinson/stackr"
+  "github.com/ricallinson/forgery"
 )
 
 var store sessions.Store
@@ -21,6 +22,10 @@ func New(w http.ResponseWriter, r *http.Request) *Sx {
     r: r,
     s: session,
   }
+}
+
+func Session(req *f.Request) *Sx {
+  return req.Map["session"].(*Sx)
 }
 
 func (this *Sx) Save() {
