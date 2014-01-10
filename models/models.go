@@ -29,6 +29,7 @@ type User struct {
 type Token struct {
   Id        int64
   Signature string
+  Access    string
 }
 
 type Repo struct {
@@ -36,4 +37,15 @@ type Repo struct {
   Name      string
   Owner     User
   Tokens    []Token
+}
+
+type UUID   string
+
+type Image struct {
+  Id        int64
+  Uuid      UUID
+  Json      string
+  Checksum  string
+  Size      int64
+  Ancestry  []UUID
 }
