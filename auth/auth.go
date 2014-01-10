@@ -4,7 +4,7 @@ import (
   "regexp"
   "net/http"
   "github.com/ricallinson/forgery"
-  "github.com/spacedock-io/registry/config"
+  /* "github.com/spacedock-io/registry/config" */
   "github.com/spacedock-io/registry/session"
 )
 
@@ -51,7 +51,7 @@ func (t *Token) Header() string {
 func (t *Token) Validate() bool {
   client := &http.Client{}
 
-  req, _ := http.NewRequest("GET", config.Get("index") + "/v1/repositories/" + t.Repo + "/images", nil)
+  req, _ := http.NewRequest("GET", "http://index.docker.io/v1/repositories/" + t.Repo + "/images", nil)
   req.Header.Add("Authorization", t.Header())
 
   resp, err := client.Do(req)
@@ -61,15 +61,14 @@ func (t *Token) Validate() bool {
   return false
 }
 
-type callback func(*f.Request, *f.Response, func())
-
-func Secure(route callback) callback {
+func Secure(route func(*f.Request, *f.Response)) func(*f.Request, *f.Response, func()) {
   /*
    * Two types of auth are valid: Token or Session 
    */
   return func(req *f.Request, res *f.Response, next func()) {
-    if session.Values["token"] != nil || LoadCheckToken(session, w, r) {
-      route(req, res, next);
+    defer next()
+    if sx.Session(req).Get("token") != nil || LoadCheckToken(req) {
+      route(req, res)
     } else {
       res.Send(401)
     }

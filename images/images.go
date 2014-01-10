@@ -22,7 +22,7 @@ func init() {
   }
 }
 
-func GetJson(req *f.Request, res *f.Response, next func()) {
+func GetJson(req *f.Request, res *f.Response) {
   var image models.Image
   models.DB.First(&models.Image{Uuid: req.Params["id"]}).First(&image)
 
