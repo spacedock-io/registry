@@ -7,7 +7,6 @@ import(
   "github.com/ricallinson/forgery"
   "github.com/ricallinson/stackr"
   "github.com/spacedock-io/registry/router"
-  "github.com/spacedock-io/registry/auth"
   "github.com/spacedock-io/registry/config"
   "github.com/Southern/logger"
 )
@@ -22,7 +21,6 @@ func main() {
     res.Set("X-Docker-Registry-Version", VERSION)
     res.Set("X-Docker-Registry-Config", config.Env)
   })
-  server.Use(auth.Middleware)
 
   app := cli.NewApp()
 
