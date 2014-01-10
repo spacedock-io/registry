@@ -9,19 +9,18 @@ import(
 var DB gorm.DB
 
 func init() {
-  DB, err := gorm.Open("postgresql", "user=yawnt dbname=test sslmode=disable")
+  var err error
+  DB, err = gorm.Open("postgresql", "user=yawnt dbname=test sslmode=disable")
 
   if err != nil {
     panic(fmt.Sprintf("Got error when connect database, the error is '%v'", err))
   }
 }
 
-type Email  string
-
 type User struct {
   Id        int64
   Username  string
-  Emails    []Email
+  Emails    []string
   Hash      []byte
   Salt      []byte
 }
@@ -39,13 +38,11 @@ type Repo struct {
   Tokens    []Token
 }
 
-type UUID   string
-
 type Image struct {
   Id        int64
-  Uuid      UUID
-  Json      string
+  Uuid      string
+  Json      []byte
   Checksum  string
   Size      int64
-  Ancestry  []UUID
+  Ancestry  []string
 }
