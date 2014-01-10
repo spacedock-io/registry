@@ -5,6 +5,7 @@ import(
   "github.com/codegangsta/cli"
   "github.com/codegangsta/martini"
   "github.com/ricallinson/forgery"
+  "github.com/ricallinson/stackr"
   "github.com/spacedock-io/registry/router"
   "github.com/spacedock-io/registry/auth"
   "github.com/spacedock-io/registry/config"
@@ -26,7 +27,7 @@ func Secure(c *mux.Router) (func(http.ResponseWriter, *http.Request)) {
 
 func main() {
   server := f.CreateServer()
-  server.Use(func (req *f.Request, res *f.Response, next func()) {
+  server.Use(func (req *stackr.Request, res *stackr.Response, next func()) {
     defer next()
 
     res.Set("X-Docker-Registry-Version", VERSION)
