@@ -5,7 +5,7 @@ package config
 
 import (
   "github.com/stretchr/objx"
-  "github.com/southern/logger"
+  "github.com/Southern/logger"
   "io/ioutil"
   "log"
   "os"
