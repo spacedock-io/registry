@@ -1,44 +1,39 @@
 package auth
 
 import (
-  "net/http"
-  "encoding/gob"
   "regexp"
-  "github.com/gorilla/sessions"
-  "github.com/spacedock-io/registry/context"
-  "github.com/spacedock-io/registry/repositories"
+  "net/http"
+  "github.com/ricallinson/forgery"
+  "github.com/spacedock-io/registry/config"
 )
 
-var parseToken = regexp.MustCompile(`^Token signature=(\w+),repository=(.*?),access=(\w+)$`)
-
-func init() {
-  gob.Register(&Token{})
-}
+var (
+  tokenRegex = regexp.MustCompile(`^Token signature=(\w+),repository=(.*?),access=(\w+)$`)
+)
 
 type Token struct {
-  Signature string
-  Repo      repositories.Repository
-  Access    string
+  Signature, Repo, Access string
 }
 
-func LoadCheckToken(s *sessions.Session, w http.ResponseWriter, r *http.Request) bool {
-  if r.Header["Authorization"] == nil {
+func LoadCheckToken(req *f.Request) bool {
+  header := req.Get("Authorization")
+  if header != ""{
     return false
   }
 
-  extracted := parseToken.FindStringSubmatch(r.Header["Authorization"][0])
+  extracted := tokenRegex.FindStringSubmatch(header)
   token := &Token{
     Signature: extracted[1],
-    Repo: *repositories.NewRepo(extracted[2]),
+    Repo: extracted[2],
     Access: extracted[3],
   }
 
   /*
    * Token Access must be compliant with the HTTP Method
    */
-  if token.Access == "read" && r.Method != "GET" { return false }
-  if token.Access == "write" && r.Method != "POST" && r.Method != "PUT" { return false }
-  if token.Access == "delete" && r.Method != "DELETE" { return false }
+  if token.Access == "read" && req.Method != "GET" { return false }
+  if token.Access == "write" && req.Method != "POST" && req.Method != "PUT" { return false }
+  if token.Access == "delete" && req.Method != "DELETE" { return false }
 
   if token.Validate() {
     s.Values["token"] = token
@@ -49,13 +44,13 @@ func LoadCheckToken(s *sessions.Session, w http.ResponseWriter, r *http.Request)
 }
 
 func (t *Token) Header() string {
-  return "Token signature=" + t.Signature + ",repository=" + t.Repo.String() + ",access="+ t.Access
+  return "Token signature=" + t.Signature + ",repository=" + t.Repo + ",access="+ t.Access
 }
 
 func (t *Token) Validate() bool {
   client := &http.Client{}
 
-  req, _ := http.NewRequest("GET", context.Index + "/v1/repositories/" + t.Repo.String() + "/images", nil)
+  req, _ := http.NewRequest("GET", config.Get("index") + "/v1/repositories/" + t.Repo + "/images", nil)
   req.Header.Add("Authorization", t.Header())
 
   resp, err := client.Do(req)
@@ -65,14 +60,17 @@ func (t *Token) Validate() bool {
   return false
 }
 
-func Authenticated (w http.ResponseWriter, r *http.Request) bool {
-  if r.URL.String() == "/" || r.URL.String() == "/v1/_ping" {
-    return true
-  }
+type callback func(*f.Request, *f.Response, func())
 
+func Secure(route callback) callback {
   /*
    * Two types of auth are valid: Token or Session 
    */
-  session, _ := context.Store.Get(r, "default")
-  return session.Values["token"] != nil || LoadCheckToken(session, w, r)
+  return func(req *f.Request, res *f.Response, next func()) {
+    if session.Values["token"] != nil || LoadCheckToken(session, w, r) {
+      route(req, res, next);
+    } else {
+      res.Send(401)
+    }
+  }
 }
