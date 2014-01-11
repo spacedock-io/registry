@@ -30,9 +30,9 @@ func main() {
   app.Usage = "Run a standalone Docker registry"
   app.Version = "0.0.1"
   app.Flags = []cli.Flag {
-    cli.StringFlag{"port, p", "8080", "Port number", false},
-    cli.StringFlag{"index, i", "false", "Index URL", false},
-    cli.StringFlag{"env, e", "dev", "Environment", false},
+    cli.StringFlag{"port, p", "8080", "Port number"},
+    cli.StringFlag{"index, i", "false", "Index URL"},
+    cli.StringFlag{"env, e", "dev", "Environment"},
   }
 
   app.Action = func(c *cli.Context) {
