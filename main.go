@@ -6,9 +6,11 @@ import(
   "github.com/codegangsta/cli"
   "github.com/ricallinson/forgery"
   "github.com/ricallinson/stackr"
+  "github.com/spacedock-io/registry/db"
   "github.com/spacedock-io/registry/router"
   "github.com/spacedock-io/registry/config"
   "github.com/spacedock-io/registry/session"
+  "github.com/spacedock-io/registry/cloudfiles"
   "github.com/Southern/logger"
 )
 
@@ -42,6 +44,9 @@ func main() {
     }
     config.Global = config.Load(env)
     config.Logger = logger.New()
+
+    db.New(config.Global)
+    cloudfiles.New(config.Global)
 
     router.Routes(server)
     config.Logger.Log("Index listening on port " + fmt.Sprint(c.Int("port")))
