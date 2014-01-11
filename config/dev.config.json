@@ -3,7 +3,7 @@
   "index": "http://127.0.0.1:8081",
   "gorm": {
     "driver": "postgres",
-    "source": "user=yawnt dbname=test sslmode=disable"
+    "source": "user=spacedock dbname=spacedock-test sslmode=disable"
   },
   "cloudfiles": {
     "username": "spacedock"
