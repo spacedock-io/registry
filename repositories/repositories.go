@@ -1,46 +1,24 @@
 package repositories
 
 import (
-  "strings"
   "encoding/json"
-  "github.com/spacedock-io/registry/context"
-  /* "github.com/spacedock-io/registry/images" */
-  /* "github.com/garyburd/redigo/redis" */
+  "github.com/ricallinson/forgery"
+  "github.com/spacedock-io/registry/models"
 )
 
-type Repository struct {
-  ns   string
-  repo string
-}
-
-type JsonImg struct {
-  Tag, id string
-}
-
-func NewRepo(complete string) *Repository {
-  parts := strings.Split(complete, "/")
-  var repo, ns string
-  if len(parts) < 2 {
-    ns = "library"
-    repo = parts[0]
-  } else {
-    ns = parts[0]
-    repo = parts[1]
+func GetTags(req *f.Request, res *f.Response) {
+  namespace := req.Params["namespace"]
+  repo := req.Params["repo"]
+  tags, err := models.GetTags(namespace, repo)
+  if err != nil {
+    res.Send(err.Error(), 400)
+    return
   }
-  return &Repository{
-    ns:   ns,
-    repo: repo,
+
+  json, jsonErr := json.Marshal(tags)
+  if jsonErr != nil {
+    res.Send("Error sending data", 400)
+    return
   }
-}
-
-func (r *Repository) String() string {
-  return r.ns + "/" + r.repo
-}
-
-func (r *Repository) Put(data []byte) {
-  var result []JsonImg
-  err := json.Unmarshal(data, &result)
-
-  /* context.Conn.Do("LPUSH", r.String() + ":_index_images" */
-  /* conn.Do("H */
+  res.Send(json, 200)
 }

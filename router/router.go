@@ -3,6 +3,7 @@ package router
 import(
   "github.com/ricallinson/forgery"
   "github.com/spacedock-io/registry/images"
+  "github.com/spacedock-io/registry/repositories"
   "github.com/spacedock-io/registry/auth"
 )
 
@@ -23,4 +24,6 @@ func Routes(server *f.Server) {
   server.Put("/v1/images/:id/layer", auth.Secure(images.GetLayer))
   server.Get("/v1/images/:id/json", auth.Secure(images.GetJson))
   server.Put("/v1/images/:id/json", auth.Secure(images.PutJson))
+
+  server.Put("/v1/repositories/:namespace/:repo/tags", auth.Secure(repositories.GetTags))
 }

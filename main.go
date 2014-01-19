@@ -9,6 +9,7 @@ import(
   "github.com/spacedock-io/registry/db"
   "github.com/spacedock-io/registry/router"
   "github.com/spacedock-io/registry/config"
+  "github.com/spacedock-io/registry/models"
   "github.com/spacedock-io/registry/session"
   "github.com/spacedock-io/registry/cloudfiles"
   "github.com/Southern/logger"
@@ -46,6 +47,8 @@ func main() {
     config.Logger = logger.New()
 
     db.New(config.Global)
+    db.DB.AutoMigrate(&models.Tag{})
+
     cloudfiles.New(config.Global)
 
     router.Routes(server)
