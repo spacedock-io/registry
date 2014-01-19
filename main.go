@@ -49,7 +49,7 @@ func main() {
     cloudfiles.New(config.Global)
 
     router.Routes(server)
-    config.Logger.Log("Index listening on port " + fmt.Sprint(c.Int("port")))
+    config.Logger.Log("Registry listening on port " + fmt.Sprint(c.Int("port")))
     server.Listen(c.Int("port"))
   }
 
