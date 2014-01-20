@@ -4,16 +4,6 @@ import (
   "github.com/spacedock-io/registry/db"
 )
 
-type Image struct {
-  Id        int64
-  Uuid      string
-  Json      []byte
-  Checksum  string
-  Size      int64
-  Ancestry  []string
-  Tags      []Tag
-}
-
 type Tag struct {
   Id         int64
   Tag        string `sql:"not null"`
