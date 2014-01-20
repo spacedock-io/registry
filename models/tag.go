@@ -12,6 +12,23 @@ type Tag struct {
   Namespace  string `sql:"not null"`
 }
 
+func CreateTag(namespace string, repo string, tag string, uuid string) error {
+  image := &Image{}
+  q := db.DB.Where("Uuid = ?", uuid).Find(image)
+
+  if q.Error != nil {
+    return q.Error
+  }
+
+  t := Tag{
+    Tag: tag,
+    Repo: repo,
+    Namespace: namespace,
+  }
+  image.Tags = append(image.Tags, t)
+  return image.Save()
+}
+
 func GetTags(namespace string, repo string) ([]Tag, error) {
   var t []Tag
   q := db.DB.Where("Namespace = ? and Repo = ?", namespace, repo).Find(&t)
