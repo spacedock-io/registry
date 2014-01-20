@@ -18,15 +18,6 @@ import(
 const VERSION = "0.0.1"
 
 func main() {
-  server := f.CreateServer()
-  server.Use(func (req *stackr.Request, res *stackr.Response, next func()) {
-    defer next()
-
-    res.SetHeader("X-Docker-Registry-Version", VERSION)
-    res.SetHeader("X-Docker-Registry-Config", "dev")
-  })
-  server.Use(sx.Middleware("SECRETVERYSECRET"))
-
   app := cli.NewApp()
 
   app.Name = "Registry"
@@ -52,6 +43,15 @@ func main() {
 
     config.Global = config.Load(env)
     config.Logger = logger.New()
+
+    server := f.CreateServer()
+    server.Use(func (req *stackr.Request, res *stackr.Response, next func()) {
+      defer next()
+
+      res.SetHeader("X-Docker-Registry-Version", VERSION)
+      res.SetHeader("X-Docker-Registry-Config", "dev")
+    })
+    server.Use(sx.Middleware("SECRETVERYSECRET"))
 
     db.New(config.Global)
     db.DB.AutoMigrate(&models.Image{})
