@@ -26,4 +26,5 @@ func Routes(server *f.Server) {
   server.Put("/v1/images/:id/json", auth.Secure(images.PutJson))
 
   server.Put("/v1/repositories/:namespace/:repo/tags", auth.Secure(repositories.GetTags))
+  server.Put("/v1/repositories/:namespace/:repo/tags/:tag", auth.Secure(repositories.GetTag))
 }

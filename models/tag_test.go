@@ -18,3 +18,11 @@ func TestGetTags(t *testing.T) {
   assert.Equal(t, tags[0].Repo, SpacedockFooLatestTag.Repo, "Repo should be correct")
   assert.Equal(t, tags[0].Namespace, SpacedockFooLatestTag.Namespace, "Namespace should be correct")
 }
+
+func TestGetTag(t *testing.T) {
+  tag, err := GetTag(SpacedockFooLatestTag.Namespace, SpacedockFooLatestTag.Repo, SpacedockFooLatestTag.Tag)
+  assert.Nil(t, err, "Error should be `nil`")
+  assert.Equal(t, tag.Tag, SpacedockFooLatestTag.Tag, "Tag should be correct")
+  assert.Equal(t, tag.Repo, SpacedockFooLatestTag.Repo, "Repo should be correct")
+  assert.Equal(t, tag.Namespace, SpacedockFooLatestTag.Namespace, "Namespace should be correct")
+}

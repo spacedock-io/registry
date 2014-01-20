@@ -22,3 +22,22 @@ func GetTags(req *f.Request, res *f.Response) {
   }
   res.Send(json, 200)
 }
+
+func GetTag(req *f.Request, res *f.Response) {
+  namespace := req.Params["namespace"]
+  repo := req.Params["repo"]
+  tag := req.Params["tag"]
+
+  t, err := models.GetTag(namespace, repo, tag)
+  if err != nil {
+    res.Send(err.Error(), 400)
+    return
+  }
+
+  json, jsonErr := json.Marshal(t)
+  if jsonErr != nil {
+    res.Send("Error sending data", 400)
+    return
+  }
+  res.Send(json, 200)
+}
