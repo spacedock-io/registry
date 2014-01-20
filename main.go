@@ -45,6 +45,9 @@ func main() {
     config.Logger = logger.New()
 
     server := f.CreateServer()
+    server.Use(func(req *stackr.Request, res *stackr.Response, next func()) {
+      config.Logger.Log(fmt.Sprintf("%s %s", req.Method, req.Url))
+    })
     server.Use(func (req *stackr.Request, res *stackr.Response, next func()) {
       defer next()
 
