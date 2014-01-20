@@ -1,46 +1,58 @@
 package repositories
 
 import (
-  "strings"
   "encoding/json"
-  "github.com/spacedock-io/registry/context"
-  /* "github.com/spacedock-io/registry/images" */
-  /* "github.com/garyburd/redigo/redis" */
+  "github.com/ricallinson/forgery"
+  "github.com/spacedock-io/registry/models"
 )
 
-type Repository struct {
-  ns   string
-  repo string
-}
-
-type JsonImg struct {
-  Tag, id string
-}
-
-func NewRepo(complete string) *Repository {
-  parts := strings.Split(complete, "/")
-  var repo, ns string
-  if len(parts) < 2 {
-    ns = "library"
-    repo = parts[0]
-  } else {
-    ns = parts[0]
-    repo = parts[1]
+func GetTags(req *f.Request, res *f.Response) {
+  namespace := req.Params["namespace"]
+  repo := req.Params["repo"]
+  tags, err := models.GetTags(namespace, repo)
+  if err != nil {
+    res.Send(err.Error(), 400)
+    return
   }
-  return &Repository{
-    ns:   ns,
-    repo: repo,
+
+  json, jsonErr := json.Marshal(tags)
+  if jsonErr != nil {
+    res.Send("Error sending data", 400)
+    return
   }
+  res.Send(json, 200)
 }
 
-func (r *Repository) String() string {
-  return r.ns + "/" + r.repo
+func GetTag(req *f.Request, res *f.Response) {
+  namespace := req.Params["namespace"]
+  repo := req.Params["repo"]
+  tag := req.Params["tag"]
+
+  t, err := models.GetTag(namespace, repo, tag)
+  if err != nil {
+    res.Send(err.Error(), 400)
+    return
+  }
+
+  json, jsonErr := json.Marshal(t)
+  if jsonErr != nil {
+    res.Send("Error sending data", 400)
+    return
+  }
+  res.Send(json, 200)
 }
 
-func (r *Repository) Put(data []byte) {
-  var result []JsonImg
-  err := json.Unmarshal(data, &result)
+func CreateTag(req *f.Request, res *f.Response) {
+  namespace := req.Params["namespace"]
+  repo := req.Params["repo"]
+  tag := req.Params["tag"]
+  uuid := req.Map["json"].(string)
 
-  /* context.Conn.Do("LPUSH", r.String() + ":_index_images" */
-  /* conn.Do("H */
+  err := models.CreateTag(namespace, repo, tag, uuid)
+  if err != nil {
+    res.Send(err.Error(), 400)
+    return
+  }
+
+  res.Send("", 200)
 }
