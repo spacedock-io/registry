@@ -10,8 +10,14 @@ type Image struct {
   Json      []byte
   Checksum  string
   Size      int64
-  Ancestry  []string
+  Ancestry  []Ancestor
   Tags      []Tag
+}
+
+type Ancestor struct {
+  Id int64
+  ImageId int64
+  Name string
 }
 
 func (image *Image) Save() error {
