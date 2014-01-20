@@ -54,6 +54,7 @@ func main() {
     config.Logger = logger.New()
 
     db.New(config.Global)
+    db.DB.AutoMigrate(&models.Image{})
     db.DB.AutoMigrate(&models.Tag{})
 
     cloudfiles.New(config.Global)
