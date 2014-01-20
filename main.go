@@ -36,13 +36,20 @@ func main() {
     cli.StringFlag{"port, p", "8080", "Port number"},
     cli.StringFlag{"index, i", "false", "Index URL"},
     cli.StringFlag{"env, e", "dev", "Environment"},
+    cli.StringFlag{"config, c", "", "Configuration directory"},
   }
 
   app.Action = func(c *cli.Context) {
     env := c.String("env")
+    dir := c.String("config")
+
     if len(env) == 0 {
       env = "dev"
     }
+    if len(dir) > 0 {
+      config.Dir = dir
+    }
+
     config.Global = config.Load(env)
     config.Logger = logger.New()
 
