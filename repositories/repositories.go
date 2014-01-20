@@ -41,3 +41,10 @@ func GetTag(req *f.Request, res *f.Response) {
   }
   res.Send(json, 200)
 }
+
+func CreateTag(req *f.Request, res *f.Response) {
+  namespace := req.Params["namespace"]
+  repo := req.Params["repo"]
+  tag := req.Params["tag"]
+
+}
