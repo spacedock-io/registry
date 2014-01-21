@@ -16,17 +16,19 @@ func CreateTag(namespace string, repo string, tag string, uuid string) error {
   image := &Image{}
   q := db.DB.Where("Uuid = ?", uuid).Find(image)
 
-  if q.Error != nil {
+  if q.RecordNotFound() {
+    t := Tag{
+      Tag: tag,
+      Repo: repo,
+      Namespace: namespace,
+    }
+    image.Tags = append(image.Tags, t)
+    return image.Save()
+  } else if q.Error != nil {
     return q.Error
   }
 
-  t := Tag{
-    Tag: tag,
-    Repo: repo,
-    Namespace: namespace,
-  }
-  image.Tags = append(image.Tags, t)
-  return image.Save()
+  return TagCreateErr
 }
 
 func GetTags(namespace string, repo string) ([]Tag, error) {
