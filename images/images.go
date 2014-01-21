@@ -30,6 +30,7 @@ func PutJson(req *f.Request, res *f.Response) {
       res.Send(err.Error(), 500)
       return
     }
+    image = &models.Image{}
   }
 
   image.Uuid = uuid
