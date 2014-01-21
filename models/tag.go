@@ -14,7 +14,7 @@ type Tag struct {
 
 func CreateTag(namespace string, repo string, tag string, uuid string) error {
   image := &Image{}
-  q := db.DB.Where("Uuid = ?", uuid).Find(image)
+  q := db.DB.Where("uuid = ?", uuid).Find(image)
 
   if q.RecordNotFound() {
     t := Tag{
