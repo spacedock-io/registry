@@ -24,7 +24,7 @@ func PutJson(req *f.Request, res *f.Response) {
   var image models.Image
   var err error
 
-  db.DB.First(&models.Image{Uuid: req.Params["id"]}).First(&image)
+  db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
   image.Json, err = ioutil.ReadAll(req.Request.Request.Body)
 
   if err != nil {
