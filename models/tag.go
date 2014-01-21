@@ -1,6 +1,7 @@
 package models
 
 import (
+  "fmt"
   "github.com/spacedock-io/registry/db"
 )
 
@@ -15,6 +16,9 @@ type Tag struct {
 func CreateTag(namespace string, repo string, tag string, uuid string) error {
   image := &Image{}
   q := db.DB.Where("uuid = ?", uuid).Find(image)
+
+  fmt.Printf("CreateTag uuid: %+v\n", uuid)
+  fmt.Printf("CreateTag q: %+v\n", q)
 
   if q.RecordNotFound() {
     t := Tag{

@@ -48,6 +48,8 @@ func CreateTag(req *f.Request, res *f.Response) {
   tag := req.Params["tag"]
   uuid := req.Map["json"].(string)
 
+  fmt.Println("Creating tag")
+
   err := models.CreateTag(namespace, repo, tag, uuid)
   if err != nil {
     res.Send(err.Error(), 400)
