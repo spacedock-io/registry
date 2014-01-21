@@ -31,9 +31,11 @@ func PutJson(req *f.Request, res *f.Response) {
 
   q := db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
   fmt.Printf("q: %+v\n", q)
-  if !q.RecordNotFound() && q.Error != nil {
-    res.Send(404)
-    return
+  if q.Error != nil {
+    if q.RecordNotFound() == false {
+      res.Send(404)
+      return
+    }
   }
 
   image.Json, err = ioutil.ReadAll(req.Request.Request.Body)
