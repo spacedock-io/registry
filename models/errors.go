@@ -6,6 +6,7 @@ type Error struct {
 
 var (
   TagCreateErr = &Error{ "Unable to create tag." }
+  TagSaveErr = &Error{ "Unable to save tag." }
 )
 
 func (err *Error) Error() string {
