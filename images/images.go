@@ -3,7 +3,6 @@ package images
 import(
   "fmt"
   "io"
-  "io/ioutil"
   "encoding/json"
   "github.com/ricallinson/forgery"
   "github.com/spacedock-io/registry/models"
@@ -34,7 +33,7 @@ func PutJson(req *f.Request, res *f.Response) {
   }
 
   image.Uuid = uuid
-  image.Json, err = ioutil.ReadAll(req.Request.Request.Body)
+  image.Json, err = json.Marshal(req.Map["json"])
 
   if err != nil {
     res.Send(500)
