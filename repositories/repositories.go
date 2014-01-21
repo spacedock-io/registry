@@ -2,6 +2,7 @@ package repositories
 
 import (
   "encoding/json"
+  "fmt"
   "github.com/ricallinson/forgery"
   "github.com/spacedock-io/registry/models"
 )
