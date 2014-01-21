@@ -1,10 +1,11 @@
 package auth
 
 import (
+  "fmt"
   "regexp"
   "net/http"
   "github.com/ricallinson/forgery"
-  /* "github.com/spacedock-io/registry/config" */
+  "github.com/spacedock-io/registry/config" 
   "github.com/spacedock-io/registry/session"
 )
 
@@ -51,7 +52,9 @@ func (t *Token) Header() string {
 func (t *Token) Validate() bool {
   client := &http.Client{}
 
-  req, _ := http.NewRequest("GET", "http://index.docker.io/v1/repositories/" + t.Repo + "/images", nil)
+  req, _ := http.NewRequest("GET",
+    fmt.Sprintf("%s/v1/repositories/%s/images",
+      config.Global.Get("index").Str(), t.Repo), nil)
   req.Header.Add("Authorization", t.Header())
 
   resp, err := client.Do(req)
