@@ -87,3 +87,24 @@ func GetAncestry(req *f.Request, res *f.Response) {
     res.Send(data)
   } else { res.Send(500) }
 }
+
+func PutChecksum(req *f.Request, res *f.Response) {
+  uuid := req.Params["id"]
+  /* *WTF* Docker?!
+     HTTP API design 101: headers are *metadata*. The checksum should be passed
+     as PUT body.
+  */
+  header := req.Header["X-Docker-Checksum"]
+  if header == nil {
+    res.Send("X-Docker-Checksum header is required", 400)
+  }
+
+  checksum := header[0]
+  err := models.SetImageChecksum(uuid, checksum)
+  if err != nil {
+    res.Send(err.Error(), 500)
+    return
+  }
+
+  res.Send(200)
+}

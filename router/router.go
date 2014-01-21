@@ -24,6 +24,11 @@ func Routes(server *f.Server) {
   server.Put("/v1/images/:id/layer", auth.Secure(images.PutLayer))
   server.Get("/v1/images/:id/json", auth.Secure(images.GetJson))
   server.Put("/v1/images/:id/json", auth.Secure(images.PutJson))
+  /* Let me quote yawnt here:
+  08:31 <@yawnt> "I HEARD THE PERFECT API HAS 3 ENDPOINTS"
+  08:31 <@yawnt> "FUCK WE GOT 2, ADD ONE"
+  */
+  server.Get("/v1/images/:id/checksum", auth.Secure(images.PutChecksum))
 
   server.Get("/v1/repositories/:namespace/:repo/tags", auth.Secure(repositories.GetTags))
   server.Get("/v1/repositories/:namespace/:repo/tags/:tag", auth.Secure(repositories.GetTag))
