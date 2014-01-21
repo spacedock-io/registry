@@ -6,7 +6,7 @@ import (
 
 type Image struct {
   Id        int64
-  Uuid      string
+  Uuid      string `sql:"not null"`
   Json      []byte
   Checksum  string
   Size      int64
