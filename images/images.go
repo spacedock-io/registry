@@ -6,14 +6,13 @@ import(
   "io/ioutil"
   "encoding/json"
   "github.com/ricallinson/forgery"
-  "github.com/spacedock-io/registry/db"
   "github.com/spacedock-io/registry/models"
   "github.com/spacedock-io/registry/cloudfiles"
 )
 
 func GetJson(req *f.Request, res *f.Response) {
   image, err := models.GetImage(req.Params["id"])
-  if q.Error != nil {
+  if err != nil {
     res.Send(404)
     return
   }
@@ -25,15 +24,10 @@ func GetJson(req *f.Request, res *f.Response) {
 }
 
 func PutJson(req *f.Request, res *f.Response) {
-  var image models.Image
-  var err error
-
   image, err := models.GetImage(req.Params["id"])
-  if q.Error != nil {
-    if q.RecordNotFound() == false {
-      res.Send(404)
-      return
-    }
+  if err != nil {
+    res.Send(404)
+    return
   }
 
   image.Json, err = ioutil.ReadAll(req.Request.Request.Body)
@@ -44,7 +38,7 @@ func PutJson(req *f.Request, res *f.Response) {
   }
 
   fmt.Printf("image: %+v\n", image)
-  err = i.Save()
+  err = image.Save()
   if err != nil {
     res.Send(err.Error(), 500)
     return
@@ -71,8 +65,8 @@ func PutLayer(req *f.Request, res *f.Response) {
 }
 
 func GetAncestry(req *f.Request, res *f.Response) {
-  image, err := GetImage(req.Params["id"])
-  if q.Error != nil {
+  image, err := models.GetImage(req.Params["id"])
+  if err != nil {
     res.Send(404)
     return
   }
