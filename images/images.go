@@ -51,7 +51,7 @@ func PutJson(req *f.Request, res *f.Response) {
 
 func GetLayer(req *f.Request, res *f.Response) {
   _, err := cloudfiles.Cloudfiles.ObjectGet(
-    "default", req.Params["id"], res.Response.Writer, true, nil)
+    "spacedock", req.Params["id"], res.Response.Writer, true, nil)
   if err == nil {
     res.Send(200)
   } else { res.Send(500) }
@@ -62,7 +62,10 @@ func PutLayer(req *f.Request, res *f.Response) {
     "spacedock", req.Params["id"], true, "", "", nil)
   if err == nil {
     io.Copy(obj, req.Request.Request.Body)
-    res.Send(200)
+    err = obj.Close()
+    if err != nil {
+      res.Send(500)
+    } else { res.Send(200) }
   } else { res.Send(500) }
 }
 
