@@ -15,6 +15,7 @@ func GetJson(req *f.Request, res *f.Response) {
   q := db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
   if q.Error != nil {
     res.Send(404)
+    return
   }
 
   res.Set("X-Docker-Size", string(image.Size))
@@ -30,8 +31,9 @@ func PutJson(req *f.Request, res *f.Response) {
   q := db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
   if q.Error != nil {
     res.Send(404)
+    return
   }
-  
+
   image.Json, err = ioutil.ReadAll(req.Request.Request.Body)
 
   if err == nil {
@@ -63,6 +65,7 @@ func GetAncestry(req *f.Request, res *f.Response) {
   q := db.DB.First(&models.Image{Uuid: req.Params["id"]}).First(&image)
   if q.Error != nil {
     res.Send(404)
+    return
   }
 
   data, err := json.Marshal(image.Ancestry)
