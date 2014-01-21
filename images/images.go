@@ -27,7 +27,7 @@ func PutJson(req *f.Request, res *f.Response) {
   db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
   image.Json, err = ioutil.ReadAll(req.Request.Request.Body)
 
-  if err != nil {
+  if err == nil {
     db.DB.Save(&image)
   } else {
     res.Send(500)
@@ -37,7 +37,7 @@ func PutJson(req *f.Request, res *f.Response) {
 func GetLayer(req *f.Request, res *f.Response) {
   _, err := cloudfiles.Cloudfiles.ObjectGet(
     "default", req.Params["id"], res.Response.Writer, true, nil)
-  if err != nil {
+  if err == nil {
     res.Send(200)
   } else { res.Send(500) }
 }
@@ -45,7 +45,7 @@ func GetLayer(req *f.Request, res *f.Response) {
 func PutLayer(req *f.Request, res *f.Response) {
   obj, err := cloudfiles.Cloudfiles.ObjectCreate(
     "default", req.Params["id"], true, "", "", nil)
-  if err != nil {
+  if err == nil {
     io.Copy(obj, req.Request.Request.Body)
     res.Send(200)
   } else { res.Send(500) }
@@ -57,7 +57,7 @@ func GetAncestry(req *f.Request, res *f.Response) {
 
   data, err := json.Marshal(image.Ancestry)
 
-  if err != nil {
+  if err == nil {
     res.Send(data)
   } else { res.Send(500) }
 }
