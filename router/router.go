@@ -21,7 +21,7 @@ func Routes(server *f.Server) {
   /* Images Routes */
   server.Get("/v1/images/:id/ancestry", auth.Secure(images.GetAncestry))
   server.Get("/v1/images/:id/layer", auth.Secure(images.GetLayer))
-  server.Put("/v1/images/:id/layer", auth.Secure(images.GetLayer))
+  server.Put("/v1/images/:id/layer", auth.Secure(images.PutLayer))
   server.Get("/v1/images/:id/json", auth.Secure(images.GetJson))
   server.Put("/v1/images/:id/json", auth.Secure(images.PutJson))
 
