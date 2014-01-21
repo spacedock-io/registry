@@ -1,7 +1,6 @@
 package models
 
 import (
-  "fmt"
   "github.com/spacedock-io/registry/db"
 )
 
@@ -14,8 +13,6 @@ type Tag struct {
 }
 
 func CreateTag(namespace string, repo string, tag string, uuid string) error {
-  fmt.Printf("CreateTag uuid: %+v\n", uuid)
-
   image, err := GetImage(uuid)
   if err != nil {
     return err
