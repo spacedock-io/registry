@@ -29,7 +29,7 @@ func PutJson(req *f.Request, res *f.Response) {
   var err error
 
   q := db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
-  if q.Error != nil {
+  if !q.RecordNotFound() && q.Error != nil {
     res.Send(404)
     return
   }
