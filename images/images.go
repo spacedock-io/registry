@@ -26,8 +26,10 @@ func GetJson(req *f.Request, res *f.Response) {
 func PutJson(req *f.Request, res *f.Response) {
   image, err := models.GetImage(req.Params["id"])
   if err != nil {
-    res.Send(404)
-    return
+    if err != models.NotFoundErr {
+      res.Send(err.Error(), 500)
+      return
+    }
   }
 
   image.Json, err = ioutil.ReadAll(req.Request.Request.Body)

@@ -5,6 +5,7 @@ type Error struct {
 }
 
 var (
+  NotFoundErr = &Error{ "Not found." }
   TagCreateErr = &Error{ "Unable to create tag." }
   TagSaveErr = &Error{ "Unable to save tag." }
 )

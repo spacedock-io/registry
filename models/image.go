@@ -24,7 +24,11 @@ func GetImage(uuid string) (*Image, error) {
   i := &Image{}
   q := db.DB.Where("Uuid = ?", uuid).Find(i)
   if q.Error != nil {
-    return nil, q.Error
+    if q.RecordNotFound() {
+      return nil, NotFoundErr
+    } else {
+      return nil, q.Error
+    }
   }
   return i, nil
 }
