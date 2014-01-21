@@ -32,10 +32,10 @@ func LoadCheckToken(req *f.Request) bool {
 
   /*
    * Token Access must be compliant with the HTTP Method
-   */
   if token.Access == "read" && req.Method != "GET" { return false }
   if token.Access == "write" && req.Method != "POST" && req.Method != "PUT" { return false }
   if token.Access == "delete" && req.Method != "DELETE" { return false }
+  */
 
   if token.Validate() {
     sx.Session(req).Set("token", token)
