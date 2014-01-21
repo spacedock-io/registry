@@ -44,20 +44,19 @@ func GetTag(req *f.Request, res *f.Response) {
 }
 
 func CreateTag(req *f.Request, res *f.Response) {
-  // namespace := req.Params["namespace"]
-  // repo := req.Params["repo"]
-  // tag := req.Params["tag"]
-  // uuid := req.Map["json"].(string)
-  // json := req.Map["json"].(map[string]interface{})
-  // uuid, _ := json["uuid"].(string)
+  namespace := req.Params["namespace"]
+  repo := req.Params["repo"]
+  tag := req.Params["tag"]
+  json := req.Map["json"].(map[string]interface{})
+  uuid, _ := json["uuid"].(string)
 
   fmt.Println("Creating tag")
 
-  // err := models.CreateTag(namespace, repo, tag, uuid)
-  // if err != nil {
-  //   res.Send(err.Error(), 400)
-  //   return
-  // }
+  err := models.CreateTag(namespace, repo, tag, uuid)
+  if err != nil {
+    res.Send(err.Error(), 400)
+    return
+  }
 
   res.Send("", 200)
 }
