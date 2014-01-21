@@ -69,7 +69,6 @@ func Secure(route func(*f.Request, *f.Response)) func(*f.Request, *f.Response, f
    * Two types of auth are valid: Token or Session 
    */
   return func(req *f.Request, res *f.Response, next func()) {
-    defer next()
     if sx.Session(req).Get("token") != nil || LoadCheckToken(req) {
       route(req, res)
     } else {
