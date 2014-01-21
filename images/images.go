@@ -24,7 +24,8 @@ func GetJson(req *f.Request, res *f.Response) {
 }
 
 func PutJson(req *f.Request, res *f.Response) {
-  image, err := models.GetImage(req.Params["id"])
+  uuid := req.Params["id"]
+  image, err := models.GetImage(uuid)
   if err != nil {
     if err != models.NotFoundErr {
       res.Send(err.Error(), 500)
@@ -32,6 +33,7 @@ func PutJson(req *f.Request, res *f.Response) {
     }
   }
 
+  image.Uuid = uuid
   image.Json, err = ioutil.ReadAll(req.Request.Request.Body)
 
   if err != nil {
