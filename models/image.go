@@ -17,6 +17,7 @@ type Image struct {
 type Ancestor struct {
   Id int64
   ImageId int64
+  ParentId int64
   Name string
 }
 
