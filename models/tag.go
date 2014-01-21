@@ -14,25 +14,20 @@ type Tag struct {
 }
 
 func CreateTag(namespace string, repo string, tag string, uuid string) error {
-  image := &Image{}
-  q := db.DB.Where("uuid = ?", uuid).Find(image)
-
   fmt.Printf("CreateTag uuid: %+v\n", uuid)
-  fmt.Printf("CreateTag q: %+v\n", q)
 
-  if q.RecordNotFound() {
-    t := Tag{
-      Tag: tag,
-      Repo: repo,
-      Namespace: namespace,
-    }
-    image.Tags = append(image.Tags, t)
-    return image.Save()
-  } else if q.Error != nil {
-    return q.Error
+  image, err := GetImage(uuid)
+  if err != nil {
+    return err
   }
 
-  return nil
+  t := Tag{
+    Tag: tag,
+    Repo: repo,
+    Namespace: namespace,
+  }
+  image.Tags = append(image.Tags, t)
+  return image.Save()
 }
 
 func GetTags(namespace string, repo string) ([]Tag, error) {
