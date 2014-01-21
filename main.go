@@ -74,6 +74,7 @@ func main() {
     db.New(config.Global)
     db.DB.AutoMigrate(&models.Image{})
     db.DB.AutoMigrate(&models.Tag{})
+    db.DB.AutoMigrate(&models.Ancestor{})
 
     cloudfiles.New(config.Global)
 
