@@ -10,7 +10,7 @@ import (
 )
 
 var (
-  tokenRegex = regexp.MustCompile(`^Token signature=(\w+),repository=(.*?),access=(\w+)$`)
+  tokenRegex = regexp.MustCompile(`^Token signature=([\w\-]+),repository=(.*?),access=(\w+)$`)
 )
 
 type Token struct {
