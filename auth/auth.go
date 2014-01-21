@@ -1,15 +1,16 @@
 package auth
 
 import (
+  "fmt"
   "regexp"
   "net/http"
   "github.com/ricallinson/forgery"
-  /* "github.com/spacedock-io/registry/config" */
+  "github.com/spacedock-io/registry/config" 
   "github.com/spacedock-io/registry/session"
 )
 
 var (
-  tokenRegex = regexp.MustCompile(`^Token signature=(\w+),repository=(.*?),access=(\w+)$`)
+  tokenRegex = regexp.MustCompile(`^Token signature=([\w\-]+),repository=(.*?),access=(\w+)$`)
 )
 
 type Token struct {
@@ -31,10 +32,10 @@ func LoadCheckToken(req *f.Request) bool {
 
   /*
    * Token Access must be compliant with the HTTP Method
-   */
   if token.Access == "read" && req.Method != "GET" { return false }
   if token.Access == "write" && req.Method != "POST" && req.Method != "PUT" { return false }
   if token.Access == "delete" && req.Method != "DELETE" { return false }
+  */
 
   if token.Validate() {
     sx.Session(req).Set("token", token)
@@ -51,7 +52,9 @@ func (t *Token) Header() string {
 func (t *Token) Validate() bool {
   client := &http.Client{}
 
-  req, _ := http.NewRequest("GET", "http://index.docker.io/v1/repositories/" + t.Repo + "/images", nil)
+  req, _ := http.NewRequest("GET",
+    fmt.Sprintf("%s/v1/repositories/%s/auth",
+      config.Global.Get("index").Str(), t.Repo), nil)
   req.Header.Add("Authorization", t.Header())
 
   resp, err := client.Do(req)
@@ -66,7 +69,6 @@ func Secure(route func(*f.Request, *f.Response)) func(*f.Request, *f.Response, f
    * Two types of auth are valid: Token or Session 
    */
   return func(req *f.Request, res *f.Response, next func()) {
-    defer next()
     if sx.Session(req).Get("token") != nil || LoadCheckToken(req) {
       route(req, res)
     } else {

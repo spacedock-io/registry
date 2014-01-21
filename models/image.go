@@ -6,7 +6,7 @@ import (
 
 type Image struct {
   Id        int64
-  Uuid      string
+  Uuid      string `sql:"not null"`
   Json      []byte
   Checksum  string
   Size      int64
@@ -17,7 +17,31 @@ type Image struct {
 type Ancestor struct {
   Id int64
   ImageId int64
+  ParentId int64
   Name string
+}
+
+func GetImage(uuid string) (*Image, error) {
+  i := &Image{}
+  q := db.DB.Where("Uuid = ?", uuid).Find(i)
+  if q.Error != nil {
+    if q.RecordNotFound() {
+      return nil, NotFoundErr
+    } else {
+      return nil, q.Error
+    }
+  }
+  return i, nil
+}
+
+func SetImageChecksum(uuid string, checksum string) error {
+  i, err := GetImage(uuid)
+  if err != nil {
+    return err
+  }
+
+  i.Checksum = checksum
+  return i.Save()
 }
 
 func (image *Image) Save() error {

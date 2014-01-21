@@ -13,11 +13,9 @@ type Tag struct {
 }
 
 func CreateTag(namespace string, repo string, tag string, uuid string) error {
-  image := &Image{}
-  q := db.DB.Where("Uuid = ?", uuid).Find(image)
-
-  if q.Error != nil {
-    return q.Error
+  image, err := GetImage(uuid)
+  if err != nil {
+    return err
   }
 
   t := Tag{
@@ -49,7 +47,10 @@ func GetTag(namespace string, repo string, tag string) (*Tag, error) {
 
 func (tag *Tag) Save() error {
   q := db.DB.Save(tag)
-  return q.Error
+  if q.Error != nil {
+    return TagSaveErr
+  }
+  return nil
 }
 
 func (tag *Tag) Create() error {
