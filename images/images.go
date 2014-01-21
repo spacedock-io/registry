@@ -46,13 +46,13 @@ func PutJson(req *f.Request, res *f.Response) {
   }
 
   fmt.Printf("image: %+v\n", image)
-  q := db.DB.Save(&image)
+  q = db.DB.Save(&image)
   fmt.Printf("q: %+v\n", q)
   if q.Error != nil {
     res.Send(500)
     return
   }
-  
+
   res.Send(200)
 }
 
