@@ -32,7 +32,7 @@ func CreateTag(namespace string, repo string, tag string, uuid string) error {
     return q.Error
   }
 
-  return TagCreateErr
+  return nil
 }
 
 func GetTags(namespace string, repo string) ([]Tag, error) {
