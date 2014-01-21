@@ -13,6 +13,7 @@ import(
   "github.com/spacedock-io/registry/session"
   "github.com/spacedock-io/registry/cloudfiles"
   "github.com/Southern/logger"
+  "github.com/Southern/middleware"
 )
 
 const VERSION = "0.0.1"
@@ -49,6 +50,7 @@ func main() {
       config.Logger.Log(fmt.Sprintf("%s %s", req.Method, req.Url))
       next()
     })
+    server.Use(middleware.BodyParser)
     server.Use(func (req *stackr.Request, res *stackr.Response, next func()) {
       defer next()
 
