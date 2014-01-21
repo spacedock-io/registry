@@ -12,6 +12,7 @@ func New(c objx.Map) swift.Connection {
     UserName: c.Get("cloudfiles.username").Str(),
     ApiKey:   c.Get("cloudfiles.apiKey").Str(),
     AuthUrl:  c.Get("cloudfiles.authUrl").Str(),
+    Region:   c.Get("cloudfiles.region").Str(),
   }
 
   err := Cloudfiles.Authenticate()
