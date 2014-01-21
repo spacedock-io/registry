@@ -40,13 +40,20 @@ func PutJson(req *f.Request, res *f.Response) {
 
   image.Json, err = ioutil.ReadAll(req.Request.Request.Body)
 
-  if err == nil {
-    fmt.Printf("image: %+v\n", image)
-    q := db.DB.Save(&image)
-    fmt.Printf("q: %+v\n", q)
-  } else {
+  if err != nil {
     res.Send(500)
+    return
   }
+
+  fmt.Printf("image: %+v\n", image)
+  q := db.DB.Save(&image)
+  fmt.Printf("q: %+v\n", q)
+  if q.Error != nil {
+    res.Send(500)
+    return
+  }
+  
+  res.Send(200)
 }
 
 func GetLayer(req *f.Request, res *f.Response) {
