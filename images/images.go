@@ -41,6 +41,7 @@ func PutJson(req *f.Request, res *f.Response) {
   image.Json, err = ioutil.ReadAll(req.Request.Request.Body)
 
   if err == nil {
+    fmt.Printf("image: %+v\n", image)
     db.DB.Save(&image)
   } else {
     res.Send(500)
