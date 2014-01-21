@@ -53,7 +53,7 @@ func (t *Token) Validate() bool {
   client := &http.Client{}
 
   req, _ := http.NewRequest("GET",
-    fmt.Sprintf("%s/v1/repositories/%s/images",
+    fmt.Sprintf("%s/v1/repositories/%s/auth",
       config.Global.Get("index").Str(), t.Repo), nil)
   req.Header.Add("Authorization", t.Header())
 
