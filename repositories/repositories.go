@@ -47,7 +47,9 @@ func CreateTag(req *f.Request, res *f.Response) {
   namespace := req.Params["namespace"]
   repo := req.Params["repo"]
   tag := req.Params["tag"]
-  uuid := req.Map["json"].(string)
+  // uuid := req.Map["json"].(string)
+  json := req.Map["json"].(map[string]interface{})
+  uuid, _ := json["uuid"].(string)
 
   fmt.Println("Creating tag")
 
