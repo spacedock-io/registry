@@ -51,7 +51,10 @@ func GetTag(namespace string, repo string, tag string) (*Tag, error) {
 
 func (tag *Tag) Save() error {
   q := db.DB.Save(tag)
-  return q.Error
+  if q.Error != nil {
+    return TagSaveErr
+  }
+  return nil
 }
 
 func (tag *Tag) Create() error {
