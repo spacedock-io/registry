@@ -1,7 +1,6 @@
 package images
 
 import(
-  "fmt"
   "io"
   "encoding/json"
   "github.com/ricallinson/forgery"
@@ -41,7 +40,6 @@ func PutJson(req *f.Request, res *f.Response) {
     return
   }
 
-  fmt.Printf("image: %+v\n", image)
   err = image.Save()
   if err != nil {
     res.Send(err.Error(), 500)
