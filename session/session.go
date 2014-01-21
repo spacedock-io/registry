@@ -43,7 +43,6 @@ func (this *Sx) Get(key interface{}) interface{} {
 func Middleware(secret string) (func(*stackr.Request, *stackr.Response, func())) {
   store = sessions.NewCookieStore([]byte(secret))
   return func(req *stackr.Request, res *stackr.Response, next func()) {
-    defer next()
     req.Map["session"] = New(res.Writer, req.Request)
   }
 }
