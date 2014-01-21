@@ -12,7 +12,7 @@ import(
 
 func GetJson(req *f.Request, res *f.Response) {
   var image models.Image
-  db.DB.First(&models.Image{Uuid: req.Params["id"]}).First(&image)
+  db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
 
   res.Set("X-Docker-Size", string(image.Size))
   res.Set("X-Docker-Checksum", image.Checksum)
