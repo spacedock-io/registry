@@ -63,6 +63,7 @@ func main() {
       res.SetHeader("X-Docker-Registry-Config", "dev")
     })
     server.Use(sx.Middleware("SECRETVERYSECRET"))
+    server.Use(f.ErrorHandler())
 
     port := c.Int("port")
     if port == 0 {
