@@ -5,7 +5,7 @@ import (
   "regexp"
   "net/http"
   "github.com/ricallinson/forgery"
-  "github.com/spacedock-io/registry/config" 
+  "github.com/spacedock-io/registry/config"
   "github.com/spacedock-io/registry/session"
 )
 
@@ -19,7 +19,7 @@ type Token struct {
 
 func LoadCheckToken(req *f.Request) bool {
   header := req.Get("Authorization")
-  if header != ""{
+  if header == ""{
     return false
   }
 
@@ -53,7 +53,7 @@ func (t *Token) Validate() bool {
   client := &http.Client{}
 
   req, _ := http.NewRequest("GET",
-    fmt.Sprintf("%s/v1/repositories/%s/auth",
+    fmt.Sprintf("%s/v1/repositories/%s/images",
       config.Global.Get("index").Str(), t.Repo), nil)
   req.Header.Add("Authorization", t.Header())
 
