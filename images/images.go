@@ -12,7 +12,10 @@ import(
 
 func GetJson(req *f.Request, res *f.Response) {
   var image models.Image
-  db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
+  q := db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
+  if q.Error != nil {
+    res.Send(404)
+  }
 
   res.Set("X-Docker-Size", string(image.Size))
   res.Set("X-Docker-Checksum", image.Checksum)
@@ -24,7 +27,11 @@ func PutJson(req *f.Request, res *f.Response) {
   var image models.Image
   var err error
 
-  db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
+  q := db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
+  if q.Error != nil {
+    res.Send(404)
+  }
+  
   image.Json, err = ioutil.ReadAll(req.Request.Request.Body)
 
   if err == nil {
@@ -53,7 +60,10 @@ func PutLayer(req *f.Request, res *f.Response) {
 
 func GetAncestry(req *f.Request, res *f.Response) {
   var image models.Image
-  db.DB.First(&models.Image{Uuid: req.Params["id"]}).First(&image)
+  q := db.DB.First(&models.Image{Uuid: req.Params["id"]}).First(&image)
+  if q.Error != nil {
+    res.Send(404)
+  }
 
   data, err := json.Marshal(image.Ancestry)
 
