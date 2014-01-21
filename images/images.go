@@ -12,8 +12,7 @@ import(
 )
 
 func GetJson(req *f.Request, res *f.Response) {
-  var image models.Image
-  q := db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
+  image, err := models.GetImage(req.Params["id"])
   if q.Error != nil {
     res.Send(404)
     return
@@ -29,8 +28,7 @@ func PutJson(req *f.Request, res *f.Response) {
   var image models.Image
   var err error
 
-  q := db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
-  fmt.Printf("q: %+v\n", q)
+  image, err := models.GetImage(req.Params["id"])
   if q.Error != nil {
     if q.RecordNotFound() == false {
       res.Send(404)
@@ -46,10 +44,9 @@ func PutJson(req *f.Request, res *f.Response) {
   }
 
   fmt.Printf("image: %+v\n", image)
-  q = db.DB.Save(&image)
-  fmt.Printf("q: %+v\n", q)
-  if q.Error != nil {
-    res.Send(500)
+  err = i.Save()
+  if err != nil {
+    res.Send(err.Error(), 500)
     return
   }
 
@@ -74,8 +71,7 @@ func PutLayer(req *f.Request, res *f.Response) {
 }
 
 func GetAncestry(req *f.Request, res *f.Response) {
-  var image models.Image
-  q := db.DB.First(&models.Image{Uuid: req.Params["id"]}).First(&image)
+  image, err := GetImage(req.Params["id"])
   if q.Error != nil {
     res.Send(404)
     return
@@ -85,7 +81,7 @@ func GetAncestry(req *f.Request, res *f.Response) {
 
   if err == nil {
     res.Send(data)
-  } else { res.Send(500) }
+  } else { res.Send(err.Error(), 500) }
 }
 
 func PutChecksum(req *f.Request, res *f.Response) {
