@@ -1,6 +1,7 @@
 package images
 
 import(
+  "fmt"
   "io"
   "io/ioutil"
   "encoding/json"
@@ -29,6 +30,7 @@ func PutJson(req *f.Request, res *f.Response) {
   var err error
 
   q := db.DB.Where(&models.Image{Uuid: req.Params["id"]}).First(&image)
+  fmt.Printf("q: %+v\n", q)
   if !q.RecordNotFound() && q.Error != nil {
     res.Send(404)
     return
