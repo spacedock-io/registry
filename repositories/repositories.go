@@ -15,7 +15,15 @@ func GetTags(req *f.Request, res *f.Response) {
     return
   }
 
-  json, jsonErr := json.Marshal(tags)
+  mappa := make(map[string]string, len(tags))
+  var i models.Image
+  for _, item := range tags {
+    db.DB.First(&i, item.ImageId)
+    mappa[item.Tag] = i.Uuid
+  }
+
+  json, jsonErr := json.Marshal(mappa)
+
   if jsonErr != nil {
     res.Send("Error sending data", 404)
     return
