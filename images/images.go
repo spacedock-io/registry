@@ -6,6 +6,7 @@ import(
   "github.com/ricallinson/forgery"
   "github.com/spacedock-io/registry/models"
   "github.com/spacedock-io/registry/cloudfiles"
+  "github.com/spacedock-io/registry/db"
 )
 
 func GetJson(req *f.Request, res *f.Response) {
@@ -41,7 +42,10 @@ func PutJson(req *f.Request, res *f.Response) {
   }
 
   err = image.Save()
-  if err != nil {
+
+  e := updateAncestry(image, req.Map["json"].(map[string]string)["parent"])
+
+  if err != nil && e != nil {
     res.Send(err.Error(), 500)
     return
   }
@@ -70,17 +74,33 @@ func PutLayer(req *f.Request, res *f.Response) {
 }
 
 func GetAncestry(req *f.Request, res *f.Response) {
-  image, err := models.GetImage(req.Params["id"])
-  if err != nil {
+  var ancestors []models.Ancestor
+  err := db.DB.Model(&models.Image{Uuid: req.Params["id"]}).Related(&ancestors)
+
+  if err.Error != nil {
     res.Send(404)
     return
   }
 
-  data, err := json.Marshal(image.Ancestry)
+  data, e := json.Marshal(ancestors)
 
-  if err == nil {
+  if e == nil {
     res.Send(data)
-  } else { res.Send(err.Error(), 500) }
+  } else { res.Send(e, 500) }
+}
+
+func updateAncestry(image *models.Image, pId string) error {
+  if pId == "" {
+    image.Ancestry = []models.Ancestor{{Value: image.Uuid}}
+    return image.Save()
+  } else {
+    pImage, err := models.GetImage(pId)
+    if err != nil {
+      return err
+    }
+    e := db.DB.Save(&models.Ancestor{Value: image.Uuid, ImageId: pImage.Id})
+    return e.Error
+  }
 }
 
 func PutChecksum(req *f.Request, res *f.Response) {
