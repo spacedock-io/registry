@@ -10,7 +10,7 @@ import (
 )
 
 var (
-  tokenRegex = regexp.MustCompile(`^Token signature=([\w\-]+),repository=(.*?),access=(\w+)$`)
+  tokenRegex = regexp.MustCompile(`^Token signature=([\w\-]+),repository="(.*?)",access=(\w+)$`)
 )
 
 type Token struct {
@@ -46,7 +46,7 @@ func LoadCheckToken(req *f.Request) bool {
 }
 
 func (t *Token) Header() string {
-  return "Token signature=" + t.Signature + ",repository=" + t.Repo + ",access="+ t.Access
+  return "Token signature=" + t.Signature + ",repository=\"" + t.Repo + "\",access="+ t.Access
 }
 
 func (t *Token) Validate() bool {
