@@ -82,7 +82,12 @@ func GetAncestry(req *f.Request, res *f.Response) {
     return
   }
 
-  data, e := json.Marshal(ancestors)
+  ids := make([]string, len(ancestors))
+  for i, v := range ancestors {
+    ids[i] = v.Value
+  }
+
+  data, e := json.Marshal(ids)
 
   if e == nil {
     res.Send(data)
