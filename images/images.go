@@ -25,7 +25,7 @@ func GetJson(req *f.Request, res *f.Response) {
 
 func PutJson(req *f.Request, res *f.Response) {
   var parent string
-  _json := req.Params["json"].(map[string]interface{})
+  _json := req.Map["json"].(map[string]interface{})
   uuid := req.Params["id"]
   image, err := models.GetImage(uuid)
   if err != nil {
