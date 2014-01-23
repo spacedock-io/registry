@@ -23,6 +23,7 @@ func GetJson(req *f.Request, res *f.Response) {
 }
 
 func PutJson(req *f.Request, res *f.Response) {
+  var parent string
   uuid := req.Params["id"]
   image, err := models.GetImage(uuid)
   if err != nil {
@@ -43,8 +44,11 @@ func PutJson(req *f.Request, res *f.Response) {
 
   err = image.Save()
 
-  e := updateAncestry(image, req.Map["json"].(map[string]interface{})["parent"].
-    (string))
+  p := req.Map["json"].(map[string]interface{})["parent"]
+  if p != nil {
+    parent = p.(string)
+  }
+  e := updateAncestry(image, parent)
 
   if err != nil && e != nil {
     res.Send(err.Error(), 500)
