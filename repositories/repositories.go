@@ -3,6 +3,7 @@ package repositories
 import (
   "encoding/json"
   "github.com/ricallinson/forgery"
+  "github.com/spacedock-io/registry/db"
   "github.com/spacedock-io/registry/models"
 )
 
