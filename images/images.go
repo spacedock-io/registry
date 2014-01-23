@@ -7,6 +7,7 @@ import(
   "github.com/spacedock-io/registry/models"
   "github.com/spacedock-io/registry/cloudfiles"
   "github.com/spacedock-io/registry/db"
+  "strconv"
 )
 
 func GetJson(req *f.Request, res *f.Response) {
@@ -16,7 +17,7 @@ func GetJson(req *f.Request, res *f.Response) {
     return
   }
 
-  res.Set("X-Docker-Size", string(image.Size))
+  res.Set("X-Docker-Size", strconv.Itoa(int(image.Size)))
   res.Set("X-Docker-Checksum", image.Checksum)
 
   res.Send(image.Json)
@@ -24,6 +25,7 @@ func GetJson(req *f.Request, res *f.Response) {
 
 func PutJson(req *f.Request, res *f.Response) {
   var parent string
+  _json := req.Params["json"].(map[string]interface{})
   uuid := req.Params["id"]
   image, err := models.GetImage(uuid)
   if err != nil {
@@ -35,7 +37,16 @@ func PutJson(req *f.Request, res *f.Response) {
   }
 
   image.Uuid = uuid
-  image.Json, err = json.Marshal(req.Map["json"])
+
+  val := _json["Size"]
+  if val != nil {
+    image.Size = int64(val.(float64))
+  } else {
+    image.Size = 0
+  }
+  _json["Size"] = int(image.Size)
+
+  image.Json, err = json.Marshal(_json)
 
   if err != nil {
     res.Send(500)
@@ -44,7 +55,7 @@ func PutJson(req *f.Request, res *f.Response) {
 
   err = image.Save()
 
-  p := req.Map["json"].(map[string]interface{})["parent"]
+  p := _json["parent"]
   if p != nil {
     parent = p.(string)
   }
