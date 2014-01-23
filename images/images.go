@@ -6,7 +6,6 @@ import(
   "github.com/ricallinson/forgery"
   "github.com/spacedock-io/registry/models"
   "github.com/spacedock-io/registry/cloudfiles"
-  "github.com/spacedock-io/registry/db"
   "strconv"
 )
 
@@ -116,13 +115,13 @@ func updateAncestry(image *models.Image, pId string) error {
     newdata := make([]string, len(data)+1)
     newdata[0] = image.Uuid
     for i, elem := range data {
-      newdata[i+1] = data[i]
+      newdata[i+1] = elem
     }
 
     if err != nil {
       return err
     }
-    marshal, e := json.Marshal(newdata)
+    marshal, _ := json.Marshal(newdata)
     image.Ancestry = marshal
 
     return image.Save()
