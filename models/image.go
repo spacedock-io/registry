@@ -10,16 +10,16 @@ type Image struct {
   Json      []byte
   Checksum  string
   Size      int64
-  Ancestry  []Ancestor
+  Ancestry  []byte
   Tags      []Tag
 }
 
-type Ancestor struct {
-  Id int64
-  ImageId int64
-  /* ParentId int64 */
-  Value string
-}
+/* type Ancestor struct { */
+/*   Id int64 */
+/*   ImageId int64 */
+/*   /1* ParentId int64 *1/ */
+/*   Value string */
+/* } */
 
 func GetImage(uuid string) (*Image, error) {
   i := &Image{}

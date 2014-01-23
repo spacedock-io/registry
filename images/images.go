@@ -79,46 +79,42 @@ func PutLayer(req *f.Request, res *f.Response) {
 }
 
 func GetAncestry(req *f.Request, res *f.Response) {
-  var (
-    ancestors []models.Ancestor
-    err error
-  )
   image, err := models.GetImage(req.Params["id"])
   if err != nil {
     res.Send(500)
     return
   }
 
-  q := db.DB.Model(image).Find(&ancestors)
-
-  if q.Error != nil {
-    res.Send(404)
-    return
-  }
-
-  ids := make([]string, len(ancestors))
-  for i, v := range ancestors {
-    ids[i] = v.Value
-  }
-
-  data, e := json.Marshal(ids)
-
-  if e == nil {
-    res.Send(data)
-  } else { res.Send(e, 500) }
+  res.Send(image.Ancestry)
 }
 
 func updateAncestry(image *models.Image, pId string) error {
   if pId == "" {
-    image.Ancestry = []models.Ancestor{{Value: image.Uuid}}
-    return image.Save()
+    ancestry := []string{image.Uuid}
+    data, err := json.Marshal(ancestry)
+    if err != nil {
+      image.Ancestry = data
+      return image.Save()
+    }
+    return err
   } else {
+    var data []string
     pImage, err := models.GetImage(pId)
+    json.Unmarshal(pImage.Ancestry, &data)
+
+    newdata := make([]string, len(data)+1)
+    newdata[0] = image.Uuid
+    for i, elem := range data {
+      newdata[i+1] = data[i]
+    }
+
     if err != nil {
       return err
     }
-    e := db.DB.Save(&models.Ancestor{Value: image.Uuid, ImageId: pImage.Id})
-    return e.Error
+    marshal, e := json.Marshal(newdata)
+    image.Ancestry = marshal
+
+    return image.Save()
   }
 }
 
