@@ -79,10 +79,19 @@ func PutLayer(req *f.Request, res *f.Response) {
 }
 
 func GetAncestry(req *f.Request, res *f.Response) {
-  var ancestors []models.Ancestor
-  err := db.DB.Model(&models.Image{Uuid: req.Params["id"]}).Related(&ancestors)
+  var (
+    ancestors []models.Ancestor
+    err error
+  )
+  image, err := models.GetImage(req.Params["id"])
+  if err != nil {
+    res.Send(500)
+    return
+  }
 
-  if err.Error != nil {
+  q := db.DB.Model(image).Find(&ancestors)
+
+  if q.Error != nil {
     res.Send(404)
     return
   }
