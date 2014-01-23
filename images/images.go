@@ -43,7 +43,8 @@ func PutJson(req *f.Request, res *f.Response) {
 
   err = image.Save()
 
-  e := updateAncestry(image, req.Map["json"].(map[string]string)["parent"])
+  e := updateAncestry(image, req.Map["json"].(map[string]interface{})["parent"].
+    (string))
 
   if err != nil && e != nil {
     res.Send(err.Error(), 500)
