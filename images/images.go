@@ -80,7 +80,10 @@ func PutLayer(req *f.Request, res *f.Response) {
   obj, err := cloudfiles.Cloudfiles.ObjectCreate(
     "spacedock", req.Params["id"], true, "", "", nil)
   if err == nil {
-    io.Copy(obj, req.Request.Request.Body)
+    _, err = io.Copy(obj, req.Request.Request.Body)
+    if err != nil {
+      res.Send(500)
+    }
     err = obj.Close()
     if err != nil {
       res.Send(500)
