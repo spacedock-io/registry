@@ -2,6 +2,7 @@ package images
 
 import(
   "io"
+  "compress/gzip"
   "encoding/json"
   "github.com/ricallinson/forgery"
   "github.com/spacedock-io/registry/models"
@@ -69,12 +70,17 @@ func PutJson(req *f.Request, res *f.Response) {
 }
 
 func GetLayer(req *f.Request, res *f.Response) {
-  /*_, err := cloudfiles.Cloudfiles.ObjectGet(
-    "spacedock", req.Params["id"], res.Response.Writer, true, nil) */
   buf, err := cloudfiles.Cloudfiles.ObjectGetBytes("spacedock", req.Params["id"])
   if err == nil {
-    res.Response.Writer.Write(buf[0:len(buf)-2])
-    res.Send(200)
+    gz := gzip.NewWriter(res.Response.Writer)
+    defer gz.Close()
+    _, err = gz.Write(buf)
+    if err == nil {
+      res.Send(200)
+    } else {
+      res.Send(500)
+    }
+    //res.Response.Writer.Write(buf[0:len(buf)-2])
   } else { res.Send(500) }
 }
 
